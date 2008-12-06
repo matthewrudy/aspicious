@@ -35,6 +35,7 @@ class Aspicious
   def initialize(watchee)
     @watchee = watchee
   end
+  attr_reader :watchee
   
   class << self
     def watch(*klasses)
@@ -68,19 +69,21 @@ class Aspicious
     private
     
     def do_watch(watch, callback, options, position)
-      method_extension = depunctuate("watcher_executing_#{callback}_#{position}")
+      with_method    = depunctuate("#{watch}_with_watcher_executing_#{callback}_#{position}")
+      without_method = depunctuate("#{watch}_without_watcher_executing_#{callback}_#{position}")
       call_watcher = "self.watcher_for(#{self}).#{callback}"
       
       klasses = options[:only] || @watching
       Array(klasses).each do |klass|
         klass.class_eval <<-RUBY, __FILE__, __LINE__
-          def #{name_for_alias_method(watch, method_extension, :with)}(*args, &block)
+          def #{with_method}(*args, &block)
             #{call_watcher if position == :before}
-            rtn = #{name_for_alias_method(watch, method_extension, :without)}(*args, &block)
+            rtn = #{without_method}(*args, &block)
             #{call_watcher if position == :after}
             return rtn
           end
-          alias_method_chain #{watch.inspect}, #{method_extension.inspect}
+          alias :#{without_method} :#{watch}
+          alias :#{watch} :#{with_method} 
         RUBY
       end
     end
@@ -112,20 +115,32 @@ class BurgerKing
   end
 end
 
-class Watcher < Aspicious
+puts "before any Aspiciousness"
+tommy = Tourist.new("Tommy")
+tommy.take_a_picture
+
+class Beggar < Aspicious
   watch Tourist
   after(:take_a_picture, :ask_for_money)
   
   def ask_for_money
-    puts "you take picture, you give me $1"
+    puts "you take picture, #{watchee.name}, you give me $1"
   end
 end
 
+puts "\n\nwith a Beggar"
+tommy.take_a_picture
+
+puts "\n\nbefore the Spoilter"
+burger = BurgerKing.new
+burger.enjoy!
+
 class Spoiler < Aspicious
   watch Tourist, BurgerKing
-  before(:enjoy!, :spoil_it)
-  after :enjoy!, :boil_it, :only => Tourist
-  def spoil_it
+  before(:enjoy!, :spoil_it!)
+  after :enjoy!, :spoil_it!, :only => Tourist
+  after :enjoy!, :boil_it,   :only => BurgerKing
+  def spoil_it!
     puts "I always spoil everything"
   end
   
@@ -133,3 +148,7 @@ class Spoiler < Aspicious
     puts "I always boil everything"
   end
 end
+
+puts "\n\nafter the Spoiler"
+burger.enjoy!
+tommy.enjoy!
