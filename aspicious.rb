@@ -1,36 +1,3 @@
-class Module
-  # stolen from Rails 2.2
-  def alias_method_chain(target, feature)
-    with_method, without_method = name_for_alias_method(target, feature, :with), name_for_alias_method(target, feature, :without)
-    
-    alias_method without_method, target
-    alias_method target, with_method
-    
-    case
-    when public_method_defined?(without_method)
-      public target
-    when protected_method_defined?(without_method)
-      protected target
-    when private_method_defined?(without_method)
-      private target
-    end
-  end
-  
-  def name_for_alias_method(target, feature, with)
-    raise(ArgumentError, "with must be :with or :without") unless [:with, :without].include?(with)
-    aliased_target, punctuation = target.to_s.sub(/([?!=])$/, ''), $1
-    "#{aliased_target}_#{with}_#{feature}#{punctuation}"
-  end
-  
-  def depunctuate(method_name)
-    method_name = method_name.to_s.dup
-    [['?', '_question_'], ['!', '_bang_'], ['=', '_equals_']].each do |punctuation, replacement|
-      method_name.gsub!(punctuation, replacement)
-    end
-    return method_name
-  end
-end
-
 class Aspicious
   def initialize(watchee)
     @watchee = watchee
@@ -88,8 +55,12 @@ class Aspicious
       end
     end
     
-    def method_extension(callback)
-      depunctuate("watcher_executing_#{callback}")
+    def depunctuate(method_name)
+      method_name = method_name.to_s.dup
+      [['?', '_question_'], ['!', '_bang_'], ['=', '_equals_']].each do |punctuation, replacement|
+        method_name.gsub!(punctuation, replacement)
+      end
+      return method_name
     end
   end
 end
