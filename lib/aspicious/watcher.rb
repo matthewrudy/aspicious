@@ -58,7 +58,7 @@ module Aspicious
       
       def depunctuate(method_name)
         method_name = method_name.to_s.dup
-        [['?', '_question_'], ['!', '_bang_'], ['=', '_equals_']].each do |punctuation, replacement|
+        [['?', '_question'], ['!', '_bang'], ['=', '_equals']].each do |punctuation, replacement|
           method_name.gsub!(punctuation, replacement)
         end
         return method_name
