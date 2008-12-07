@@ -1,0 +1,52 @@
+Aspicious
+=====================================================
+
+Aspicious is a lightweight, simple, implementation of Aspects into Ruby.
+For a more heavy handed approach see AspectR and Aquarium.
+
+Aspicious is based on the founding principle that "aspects" is like "suspects"
+and "aspicious" is like "suspicious". So it doesnt mean anything, but nevertheless is a name.
+
+Example
+=====================================================
+
+  class Turtle < ActiveRecord::Base
+    def lay_some_eggs
+      puts "laying these eggs good"
+    end
+  end
+
+  class EggThief < Aspicious::Watcher
+    watch Turtle
+    after :lay_some_eggs, :try_to_steal_the_eggs
+
+    def try_to_steal_the_eggs
+      if watchee.is_weak?
+        puts "I stole the eggs"
+      else
+        puts "I didnt manage to steal the eggs. Nature is safe!"
+      end
+    end
+  end
+
+but you can also "watch" multiple classes, and specify an :only option
+
+  class Chicken
+    def lay_some_eggs
+      puts "chickens lay eggs for everybody to eat"
+    end
+  end
+
+  class CorporateEggFarmer < Aspicious::Watcher
+    watch Turtle, Chicken
+    before :lay_some_eggs, :advertise_the_eggs, :only => Chicken
+
+    def advertise_the_eggs
+      puts "even though #{watchee.name}'s eggs aren't out yet, I'll start advertising them on TV. If Kerry Katona is advertising them on ITV they will surely sell?"
+    end
+  end
+
+BOOM!!!
+Most of the power of Aspect Oriented Programming for 1% of the price
+
+Copyright (c) 2008 [Matthew Rudy Jacobs], released under the MIT license
