@@ -9,6 +9,8 @@ and "aspicious" is like "suspicious". So it doesnt mean anything, but neverthele
 
 Example
 =====================================================
+  require 'rubygems'
+  require 'aspicious'
 
   class Turtle < ActiveRecord::Base
     def lay_some_eggs
