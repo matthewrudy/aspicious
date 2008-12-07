@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.description = "Aspects applied to Ruby with an air of super-simplicity"
   s.has_rdoc = true
   s.authors = ["Matthew Rudy Jacobs"]
-  s.files = ["README", "Rakefile", "lib/aspicious.rb", "lib/aspicious/watcher.rb", "example/burgerking.rb"]
+  s.files = ["README", "Rakefile", "lib/aspicious.rb", "lib/aspicious/watcher.rb", "examples/burgerking.rb"]
   #s.test_files = ["spec/aspicious.rb"]
   s.rdoc_options = ["--main", "README"]
   s.extra_rdoc_files = ["README"]
