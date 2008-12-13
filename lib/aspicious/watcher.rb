@@ -56,6 +56,8 @@ module Aspicious
         end
       end
       
+      #  >> Aspicious::Watcher.depunctuate("a!_method?_with=_lots_of!?=_punctuation")
+      #  => "a_band_method_question_with_equals_lots_of_bang_question_equals_punctuation"
       def depunctuate(method_name)
         method_name = method_name.to_s.dup
         [['?', '_question'], ['!', '_bang'], ['=', '_equals']].each do |punctuation, replacement|
