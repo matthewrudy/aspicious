@@ -1,6 +1,6 @@
 module Aspicious
   class Watcher
-    # doctest: is initialized with a :watchee
+    # it: should set the :watchee on initialize
     #  >> watcher = Aspicious::Watcher.new(:something_to_watch)
     #  >> watcher.watchee
     #  => :something_to_watch
@@ -10,7 +10,7 @@ module Aspicious
     attr_reader :watchee
   
     class << self
-      # doctest: watching adds a 'watchers' accessor
+      # it: should add a 'watchers' accessor when we call "watch"
       #  >> class ToBeWatched; end
       #  >> class Watching < Aspicious::Watcher ; watch(ToBeWatched) ; end
       #  >> ['watchers', 'watchers='] & ToBeWatched.instance_methods
@@ -65,7 +65,7 @@ module Aspicious
         end
       end
 
-      # doctest: depunctuate can remove conventional method punctuation
+      # it: should depunctuate conventional method punctuation
       #   >> Aspicious::Watcher.send(:depunctuate, "a!_method?_with=_lots_of!?=_punctuation")
       #   => "a_bang_method_question_with_equals_lots_of_bang_question_equals_punctuation"
       def depunctuate(method_name)
