@@ -1,11 +1,20 @@
 module Aspicious
   class Watcher
+    # doctest: is initialized with a :watchee
+    #  >> watcher = Aspicious::Watcher.new(:something_to_watch)
+    #  >> watcher.watchee
+    #  => :something_to_watch
     def initialize(watchee)
       @watchee = watchee
     end
     attr_reader :watchee
   
     class << self
+      # doctest: watching adds a 'watchers' accessor
+      #  >> class ToBeWatched; end
+      #  >> class Watching < Aspicious::Watcher ; watch(ToBeWatched) ; end
+      #  >> ['watchers', 'watchers='] & ToBeWatched.instance_methods
+      #  => ['watchers', 'watchers=']
       def watch(*klasses)
         @watching ||= []
         klasses.each do |klass|
@@ -55,9 +64,10 @@ module Aspicious
           RUBY
         end
       end
-      
-      #  >> Aspicious::Watcher.depunctuate("a!_method?_with=_lots_of!?=_punctuation")
-      #  => "a_band_method_question_with_equals_lots_of_bang_question_equals_punctuation"
+
+      # doctest: depunctuate can remove conventional method punctuation
+      #   >> Aspicious::Watcher.send(:depunctuate, "a!_method?_with=_lots_of!?=_punctuation")
+      #   => "a_bang_method_question_with_equals_lots_of_bang_question_equals_punctuation"
       def depunctuate(method_name)
         method_name = method_name.to_s.dup
         [['?', '_question'], ['!', '_bang'], ['=', '_equals']].each do |punctuation, replacement|

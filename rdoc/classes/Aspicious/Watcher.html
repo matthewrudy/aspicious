@@ -138,10 +138,10 @@
             onclick="toggleCode('M000004-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000004-source">
 <pre>
-    <span class="ruby-comment cmt"># File lib/aspicious/watcher.rb, line 34</span>
-34:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">after</span>(<span class="ruby-identifier">method_to_watch</span>, <span class="ruby-identifier">callback</span>, <span class="ruby-identifier">options</span>={})
-35:         <span class="ruby-identifier">do_watch</span>(<span class="ruby-identifier">method_to_watch</span>, <span class="ruby-identifier">callback</span>, <span class="ruby-identifier">options</span>, <span class="ruby-identifier">:after</span>)
-36:       <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt"># File lib/aspicious/watcher.rb, line 43</span>
+43:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">after</span>(<span class="ruby-identifier">method_to_watch</span>, <span class="ruby-identifier">callback</span>, <span class="ruby-identifier">options</span>={})
+44:         <span class="ruby-identifier">do_watch</span>(<span class="ruby-identifier">method_to_watch</span>, <span class="ruby-identifier">callback</span>, <span class="ruby-identifier">options</span>, <span class="ruby-identifier">:after</span>)
+45:       <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -161,10 +161,10 @@
             onclick="toggleCode('M000003-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000003-source">
 <pre>
-    <span class="ruby-comment cmt"># File lib/aspicious/watcher.rb, line 30</span>
-30:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">before</span>(<span class="ruby-identifier">method_to_watch</span>, <span class="ruby-identifier">callback</span>, <span class="ruby-identifier">options</span>={})
-31:         <span class="ruby-identifier">do_watch</span>(<span class="ruby-identifier">method_to_watch</span>, <span class="ruby-identifier">callback</span>, <span class="ruby-identifier">options</span>, <span class="ruby-identifier">:before</span>)
-32:       <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt"># File lib/aspicious/watcher.rb, line 39</span>
+39:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">before</span>(<span class="ruby-identifier">method_to_watch</span>, <span class="ruby-identifier">callback</span>, <span class="ruby-identifier">options</span>={})
+40:         <span class="ruby-identifier">do_watch</span>(<span class="ruby-identifier">method_to_watch</span>, <span class="ruby-identifier">callback</span>, <span class="ruby-identifier">options</span>, <span class="ruby-identifier">:before</span>)
+41:       <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -180,14 +180,22 @@
         </div>
       
         <div class="method-description">
+          <p>
+doctest: is initialized with a :watchee
+</p>
+<pre>
+ &gt;&gt; watcher = Aspicious::Watcher.new(:something_to_watch)
+ &gt;&gt; watcher.watchee
+ =&gt; :something_to_watch
+</pre>
           <p><a class="source-toggle" href="#"
             onclick="toggleCode('M000001-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000001-source">
 <pre>
-   <span class="ruby-comment cmt"># File lib/aspicious/watcher.rb, line 3</span>
-3:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">watchee</span>)
-4:       <span class="ruby-ivar">@watchee</span> = <span class="ruby-identifier">watchee</span>
-5:     <span class="ruby-keyword kw">end</span>
+   <span class="ruby-comment cmt"># File lib/aspicious/watcher.rb, line 7</span>
+7:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">watchee</span>)
+8:       <span class="ruby-ivar">@watchee</span> = <span class="ruby-identifier">watchee</span>
+9:     <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -203,18 +211,27 @@
         </div>
       
         <div class="method-description">
+          <p>
+doctest: watching adds a &#8216;watchers&#8217; accessor
+</p>
+<pre>
+ &gt;&gt; class ToBeWatched; end
+ &gt;&gt; class Watching &lt; Aspicious::Watcher ; watch(ToBeWatched) ; end
+ &gt;&gt; ['watchers', 'watchers='] &amp; ToBeWatched.instance_methods
+ =&gt; ['watchers', 'watchers=']
+</pre>
           <p><a class="source-toggle" href="#"
             onclick="toggleCode('M000002-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000002-source">
 <pre>
-    <span class="ruby-comment cmt"># File lib/aspicious/watcher.rb, line 9</span>
- 9:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">watch</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">klasses</span>)
-10:         <span class="ruby-ivar">@watching</span> <span class="ruby-operator">||=</span> []
-11:         <span class="ruby-identifier">klasses</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">klass</span><span class="ruby-operator">|</span>
-12:           <span class="ruby-ivar">@watching</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">klass</span>
-13:           <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">class_eval</span> <span class="ruby-value str">&quot;unless self.instance_methods.include?('watchers')\nattr_accessor :watchers\ndef watcher_for(klass)\nself.watchers ||= []\nunless watcher = self.watchers.detect{|w| w.is_a?(klass)}\nwatcher = klass.new(self)\nself.watchers &lt;&lt; watcher\nend\nreturn watcher\nend\nend\n&quot;</span>, <span class="ruby-keyword kw">__FILE__</span>, <span class="ruby-keyword kw">__LINE__</span>
-14:         <span class="ruby-keyword kw">end</span>
-15:       <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt"># File lib/aspicious/watcher.rb, line 18</span>
+18:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">watch</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">klasses</span>)
+19:         <span class="ruby-ivar">@watching</span> <span class="ruby-operator">||=</span> []
+20:         <span class="ruby-identifier">klasses</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">klass</span><span class="ruby-operator">|</span>
+21:           <span class="ruby-ivar">@watching</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">klass</span>
+22:           <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">class_eval</span> <span class="ruby-value str">&quot;unless self.instance_methods.include?('watchers')\nattr_accessor :watchers\ndef watcher_for(klass)\nself.watchers ||= []\nunless watcher = self.watchers.detect{|w| w.is_a?(klass)}\nwatcher = klass.new(self)\nself.watchers &lt;&lt; watcher\nend\nreturn watcher\nend\nend\n&quot;</span>, <span class="ruby-keyword kw">__FILE__</span>, <span class="ruby-keyword kw">__LINE__</span>
+23:         <span class="ruby-keyword kw">end</span>
+24:       <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
